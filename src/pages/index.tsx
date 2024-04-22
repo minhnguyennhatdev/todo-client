@@ -1,8 +1,7 @@
 import { Layout } from "@/components/Layout";
 import { RootState } from "@/redux/store";
 import { AddTodo, addTodo, deleteTodo, getTodos, ITodo } from "@/services/todo";
-import { httpRequest } from "@/utils/axios";
-import { Dispatch, HtmlHTMLAttributes, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function Todo() {
