@@ -7,7 +7,7 @@ const axios = Axios.create({
 
 axios.interceptors.request.use(
     async (config) => {
-        if(typeof localStorage !== 'undefined' || !config?.headers?.Authorization) {
+        if(typeof localStorage !== 'undefined' && !config?.headers?.Authorization) {
             config.headers.Authorization = `Bearer ${localStorage?.getItem(
                 "accessToken"
             )}`;
