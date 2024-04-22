@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'sso-server',
+      name: 'todo-client',
       script: 'yarn start',
     },
   ],
