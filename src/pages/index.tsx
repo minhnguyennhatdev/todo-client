@@ -1,18 +1,14 @@
 import { Layout } from "@/components/Layout";
 import { RootState } from "@/redux/store";
+import { AddTodo, addTodo, deleteTodo, getTodos, ITodo } from "@/services/todo";
 import { httpRequest } from "@/utils/axios";
 import { Dispatch, HtmlHTMLAttributes, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
-interface ITodo {
-  title: string;
-  description: string;
-}
-
 export default function Todo() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState<ITodo[]>([]);
 
-  const [input, setInput] = useState<{ title: string, description: string }>({
+  const [input, setInput] = useState<AddTodo>({
     title: '',
     description: '',
   })
@@ -21,12 +17,8 @@ export default function Todo() {
 
   const fetchTodoList = useCallback(async () => {
     try {
-      const { data } = await httpRequest({
-        url: '/api/todos',
-        method: 'GET',
-      });
-      console.log(data)
-      if (data?.length) {
+      const data = await getTodos()
+      if (data) {
         setTodos(data);
       }
     } catch (error) {
@@ -39,6 +31,27 @@ export default function Todo() {
       fetchTodoList()
     }
   }, [fetchTodoList, user])
+
+  const handleAddTodo = useCallback(async (input: AddTodo) => {
+    try {
+      const data = await addTodo(input)
+      if (data) {
+        setInput({ title: '', description: '' });
+        fetchTodoList()
+      }
+    } catch (error) {
+      console.error('Error adding todo:', error);
+    }
+  }, [fetchTodoList])
+
+  const handleDeleteTodo = useCallback(async (id: number) => {
+    try {
+      await deleteTodo(id)
+      fetchTodoList()
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+    }
+  }, [fetchTodoList])
 
   const renderLayout = useCallback((first: any, second: any) => {
     return (
@@ -56,17 +69,22 @@ export default function Todo() {
   const renderTodos = useMemo(() => {
     return <div>
       <div className="font-semibold">
-      TODO LIST
+        TODO LIST
       </div>
-      {todos?.map((todo: any, index: number) => {
+      {todos?.map((todo: ITodo, index: number) => {
         return (
           <div key={index}>
-            {renderLayout(todo.title, todo.description)}
+            {renderLayout(
+              todo.title,
+              <div className="w-full flex justify-between">
+                <span>{todo.description}</span>
+                <span className="text-red-600 cursor-pointer" onClick={() => handleDeleteTodo(todo.id)}>X</span>
+              </div>)}
           </div>
         )
       })}
     </div>
-  }, [todos])
+  }, [handleDeleteTodo, renderLayout, todos])
 
   const renderInput = useCallback((title: string, value: string, setValue: any) => {
     return (
@@ -83,24 +101,7 @@ export default function Todo() {
     )
   }, [])
 
-  const handleAddTodo = useCallback(async (title: string, description: string) => {
-    try {
-      const { data } = await httpRequest({
-        url: '/api/todos',
-        method: 'POST',
-        data: {
-          title,
-          description,
-        },
-      });
-      if (data) {
-        setInput({ title: '', description: '' });
-        fetchTodoList()
-      }
-    } catch (error) {
-      console.error('Error adding todo:', error);
-    }
-  }, [fetchTodoList])
+
 
   return (
     <Layout>
@@ -112,7 +113,7 @@ export default function Todo() {
           )}
           <div
             className="hover:text-red-500 cursor-pointer mt-2 text-green-700"
-            onClick={() => handleAddTodo(input.title, input.description)}
+            onClick={() => handleAddTodo(input)}
           >
             Add
           </div>

@@ -7,7 +7,10 @@ const axios = Axios.create({
 
 axios.interceptors.request.use(
     async (config) => {
-        if(typeof localStorage !== 'undefined' && !config?.headers?.Authorization) {
+        if (
+            typeof localStorage !== "undefined" &&
+            !config?.headers?.Authorization
+        ) {
             config.headers.Authorization = `Bearer ${localStorage?.getItem(
                 "accessToken"
             )}`;
@@ -19,14 +22,19 @@ axios.interceptors.request.use(
     }
 );
 
-export const httpRequest = async (
+type AxiosResponse<T> = {
+    data: T;
+    status: number;
+}
+
+export const httpRequest = async <T = any>(
     request: AxiosRequestConfig & { query?: Record<string, string> }
-) => {
+): Promise<AxiosResponse<T>> => {
     const { query } = request;
     if (query) {
         request.url += `?${new URLSearchParams(query).toString()}`;
         delete request.query;
     }
-    const { data } = await axios(request);
+    const { data } = await axios<AxiosResponse<T>>(request);
     return data;
 };
