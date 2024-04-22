@@ -1,11 +1,9 @@
 import { setUser } from "@/redux/slices/authSlice";
 import { RootState } from "@/redux/store";
-import { fetchUser, logout } from "@/services/user";
 import { httpRequest } from "@/utils/axios";
 import { buildLoginUrl } from "@/utils/sso";
 import axios from "axios";
-import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
