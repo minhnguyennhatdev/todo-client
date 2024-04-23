@@ -3,6 +3,7 @@ import { RootState } from "@/redux/store";
 import { AddTodo, addTodo, deleteTodo, getTodos, ITodo } from "@/services/todo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function Todo() {
   const [todos, setTodos] = useState<ITodo[]>([]);
@@ -34,9 +35,15 @@ export default function Todo() {
   const handleAddTodo = useCallback(async (input: AddTodo) => {
     try {
       const data = await addTodo(input)
-      if (data) {
+      console.log(data)
+      if (data?.data) {
         setInput({ title: '', description: '' });
         fetchTodoList()
+      } 
+      if(data?.message) {
+        toast.error(data?.message)
+      } else {
+        toast.info('Task added')
       }
     } catch (error) {
       console.error('Error adding todo:', error);
@@ -45,7 +52,10 @@ export default function Todo() {
 
   const handleDeleteTodo = useCallback(async (id: number) => {
     try {
-      await deleteTodo(id)
+      const data = await deleteTodo(id)
+      if(data?.data) {
+        toast.warn('Task removed')
+      }
       fetchTodoList()
     } catch (error) {
       console.error('Error deleting todo:', error);

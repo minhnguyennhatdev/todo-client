@@ -5,6 +5,8 @@ import { buildLoginUrl } from "@/utils/sso";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -38,6 +40,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="px-10">
+      <ToastContainer hideProgressBar autoClose={2000} />
       <header className="w-full flex justify-between items-center h-14">
         <div className="font-semibold text-xl">
           TODO

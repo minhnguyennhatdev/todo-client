@@ -18,7 +18,7 @@ export const getTodos = async () => {
 
 export type AddTodo = Pick<ITodo, "title" | "description">;
 export const addTodo = async (todo: AddTodo) => {
-    const data = await httpRequest<boolean>({
+    const data = await httpRequest<any>({
         method: "POST",
         url: "/api/todos",
         data: todo,
