@@ -40,7 +40,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="px-10">
-      <ToastContainer hideProgressBar autoClose={2000} />
+      <ToastContainer hideProgressBar autoClose={2000} position="top-center" />
       <header className="w-full flex justify-between items-center h-14">
         <div className="font-semibold text-xl">
           TODO
