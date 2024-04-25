@@ -4,8 +4,12 @@ import { AddTodo, addTodo, deleteTodo, getTodos, ITodo } from "@/services/todo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from "next-i18next";
 
 export default function Todo() {
+  const { t } = useTranslation()
+
   const [todos, setTodos] = useState<ITodo[]>([]);
 
   const [input, setInput] = useState<AddTodo>({
@@ -39,8 +43,8 @@ export default function Todo() {
       if (data?.data) {
         setInput({ title: '', description: '' });
         fetchTodoList()
-      } 
-      if(data?.message) {
+      }
+      if (data?.message) {
         toast.error(data?.message)
       } else {
         toast.info('Task added')
@@ -53,7 +57,7 @@ export default function Todo() {
   const handleDeleteTodo = useCallback(async (id: number) => {
     try {
       const data = await deleteTodo(id)
-      if(data?.data) {
+      if (data?.data) {
         toast.warn('Task removed')
       }
       fetchTodoList()
@@ -110,28 +114,36 @@ export default function Todo() {
     )
   }, [])
 
-
-
   return (
     <Layout>
       {user ? <div className="py-20 flex justify-center">
         <div>
           {renderLayout(
-            renderInput('Title', input.title, (value: string) => setInput({ ...input, title: value })),
-            renderInput('Description', input.description, (value: string) => setInput({ ...input, description: value }))
+            renderInput(t('common:title'), input.title, (value: string) => setInput({ ...input, title: value })),
+            renderInput(t('common:description'), input.description, (value: string) => setInput({ ...input, description: value }))
           )}
           <div
             className="hover:text-red-500 cursor-pointer mt-2 text-green-700"
             onClick={() => handleAddTodo(input)}
           >
-            Add
+            {t('common:add')}
           </div>
 
           <div className="mt-8">
             {renderTodos}
           </div>
         </div>
-      </div> : <div className="w-full flex justify-center">Please login first</div>}
+      </div> : <div className="w-full flex justify-center">{t('common:login_first')}
+</div>}
     </Layout>
   );
+}
+
+
+export async function getServerSideProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale)),
+    },
+  }
 }

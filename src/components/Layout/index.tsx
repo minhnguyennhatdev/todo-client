@@ -1,14 +1,18 @@
+import { LANGUAGE, useLanguage } from "@/hooks.ts/useLanguage";
 import { setUser } from "@/redux/slices/authSlice";
 import { RootState } from "@/redux/store";
 import { httpRequest } from "@/utils/axios";
 import { buildLoginUrl } from "@/utils/sso";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
+import { useTranslation } from "next-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
+  const { t } = useTranslation();
+  const { locale, changeLocale } = useLanguage()
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -45,17 +49,28 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="font-semibold text-xl">
           TODO
         </div>
-        <div>
-          {user ?
-            (<div>
-              {user.name} (<span className="hover:underline hover:text-blue-300 cursor-pointer" onClick={() => logout()}>Logout</span>)
-            </div>) :
-            (<div className="hover:underline hover:text-green-300">
-              <a href={buildLoginUrl()}>
-                Login
-              </a>
-            </div>)
-          }
+        <div className="flex items-center space-x-4">
+          <div>
+            {user ?
+              (<div>
+                {user.name}
+                (<span className="hover:underline hover:text-blue-300 cursor-pointer" onClick={() => logout()}>
+                  {t('common:logout')}
+                </span>)
+              </div>) :
+              (<div className="hover:underline hover:text-green-300">
+                <a href={buildLoginUrl()}>
+                  {t('common:login')}
+                </a>
+              </div>)
+            }
+          </div>
+          <div>
+            <select defaultValue={locale} onChange={(e) => changeLocale(e?.target.value)}>
+              <option value={LANGUAGE.VI}>VI</option>
+              <option value={LANGUAGE.EN}>EN</option>
+            </select>
+          </div>
         </div>
       </header>
       <main>{children}</main>
