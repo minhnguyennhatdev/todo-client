@@ -1,11 +1,18 @@
 import { httpRequest } from "@/utils/axios";
-import axios from "axios";
+
+export const TodoStatus = {
+    DONE: "DONE",
+    IN_PROGRESS: "IN_PROGRESS",
+    TODO: "TODO",
+};
 
 export interface ITodo {
     id: number;
     userId: number;
     title: string;
     description: string;
+    status: typeof TodoStatus[keyof typeof TodoStatus];
+    createdAt: string;
 }
 
 export const getTodos = async () => {
