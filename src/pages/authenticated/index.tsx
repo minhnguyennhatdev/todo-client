@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useRouter } from "next/router"
 import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
+import { authenticated } from "@/services/user";
 
 const Authenticated = ({ accessToken }: { accessToken: string }) => {
   const router = useRouter()
@@ -25,11 +26,8 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       }
     }
   }
-  const { data } = await httpRequest({
-    url: `/api/authenticated?token=${token}`,
-    method: "GET"
-  })
-  const accessToken = data?.token
+  const { data } = await authenticated(token as string)
+  const accessToken = data?.data?.token
   if (!accessToken) {
     return {
       redirect: {

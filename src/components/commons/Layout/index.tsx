@@ -1,30 +1,32 @@
 import { LANGUAGE, useLanguage } from "@/hooks.ts/useLanguage";
 import { setUser } from "@/redux/slices/authSlice";
 import { RootState } from "@/redux/store";
-import { httpRequest } from "@/utils/axios";
 import { buildLoginUrl } from "@/utils/sso";
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { me } from "@/services/user";
+import { useRouter } from "next/navigation";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation();
   const { locale, changeLocale } = useLanguage()
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
+  const router = useRouter()
   useEffect(() => {
     if (!user) {
       const fetchUser = async () => {
         try {
-          const { data } = await httpRequest({
-            url: '/api/authenticated/me',
-            method: 'GET',
-          });
-          if (data) {
-            dispatch(setUser(data));
+          const { data, status } = await me();
+          console.log(data, status)
+          if (status === HttpStatusCode.Ok && data?.data) {
+            dispatch(setUser(data?.data));
+          } else {
+            logout()
           }
         } catch (error) {
         }
@@ -32,14 +34,14 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       fetchUser()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const logout = useCallback(() => {
-    if (user) {
-      dispatch(setUser(null));
-      localStorage.removeItem('accessToken');
-      axios.defaults.headers.common["Authorization"] = null;
-    }
+    localStorage.removeItem('accessToken');
+    delete axios.defaults.headers.common["Authorization"];
+     dispatch(setUser(null));
+     router.push('/unauthorized')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, user])
 
   return (
