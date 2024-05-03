@@ -75,7 +75,7 @@ export const AddTaskModal = ({ onClose, status, callback }: AddTaskModalProps) =
           />
           <div></div>
           <Button
-            className="w-full rounded-md bg-red-200 text-center text-black"
+            className="w-full rounded-md bg-red-400 text-center text-black"
             onClick={() => handleAddTask(value)}
             text="Add" />
         </div>

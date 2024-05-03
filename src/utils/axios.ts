@@ -30,14 +30,14 @@ type Response<T> = {
 
 export const httpRequest = async <T = any>(
     request: AxiosRequestConfig & { query?: Record<string, string> }
-): Promise<{ status: number; data: T }> => {
+): Promise<{ status: number; data: Response<T> }> => {
     const { query } = request;
     if (query) {
         request.url += `?${new URLSearchParams(query).toString()}`;
         delete request.query;
     }
     const {
-        data: { data },
+        data,
         status,
     } = await axios<Response<T>>(request);
     return { data, status };
