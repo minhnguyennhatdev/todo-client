@@ -24,18 +24,21 @@ axios.interceptors.request.use(
 
 type Response<T> = {
     data: T;
-    status: number;
+    statusCode: number;
     message: string;
 };
 
 export const httpRequest = async <T = any>(
     request: AxiosRequestConfig & { query?: Record<string, string> }
-): Promise<Response<T>> => {
+): Promise<{ status: number; data: T }> => {
     const { query } = request;
     if (query) {
         request.url += `?${new URLSearchParams(query).toString()}`;
         delete request.query;
     }
-    const { data } = await axios<Response<T>>(request);
-    return data;
+    const {
+        data: { data },
+        status,
+    } = await axios<Response<T>>(request);
+    return { data, status };
 };

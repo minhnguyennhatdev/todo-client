@@ -1,4 +1,6 @@
 import { httpRequest } from "@/utils/axios";
+import { HttpStatusCode } from "axios";
+import { toast } from "react-toastify";
 
 export const TodoStatus = {
     DONE: "DONE",
@@ -17,28 +19,49 @@ export interface ITodo {
     createdAt: string;
 }
 
-export const getTodos = async (status?: TodoStatus) => {
-    const { data } = await httpRequest<{ todos: ITodo[]; hasNext: boolean }>({
+export const getTodos = async (_status?: TodoStatus) => {
+    const { data, status } = await httpRequest<{
+        todos: ITodo[];
+        hasNext: boolean;
+    }>({
         method: "GET",
-        url: "/api/todos" + (status ? `?status=${status}` : ""),
+        url: "/api/todos" + (_status ? `?status=${_status}` : ""),
     });
-    return data;
+    return { data, status };
 };
 
-export type AddTodo = Pick<ITodo, "title" | "description" | 'status'>;
+export type AddTodo = Pick<ITodo, "title" | "description" | "status">;
 export const addTodo = async (todo: AddTodo) => {
-    const data = await httpRequest<any>({
+    const { data, status } = await httpRequest<any>({
         method: "POST",
         url: "/api/todos",
         data: todo,
     });
-    return data;
+    if (status === HttpStatusCode.Ok) {
+        toast.info("Todo added successfully");
+    }
+    return { data, status };
 };
 
 export const deleteTodo = async (id: number) => {
-    const data = await httpRequest<boolean>({
+    const { data, status } = await httpRequest<boolean>({
         method: "DELETE",
         url: `/api/todos/${id}`,
     });
+    if (status === HttpStatusCode.Ok) {
+        toast.error("Todo deleted successfully");
+    }
+    return data;
+};
+
+export const updateTodo = async (id: number, toStatus: TodoStatus) => {
+    const { data, status } = await httpRequest({
+        method: "PUT",
+        url: `/api/todos/${id}`,
+        data: { status: toStatus },
+    });
+    if (status === HttpStatusCode.Ok) {
+        toast.info("Todo updated successfully");
+    }
     return data;
 };

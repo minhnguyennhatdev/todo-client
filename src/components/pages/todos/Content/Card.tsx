@@ -1,8 +1,8 @@
-import { ITodo } from "@/services/todo"
+import { deleteTodo, ITodo } from "@/services/todo"
 import { formatDate } from "@/utils/format"
 import { useDrag } from "react-dnd"
 
-export const Card = ({ data }: { data: ITodo }) => {
+export const Card = ({ data, refresh }: { data: ITodo, refresh: () => void }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: data.status,
     item: data,
@@ -17,8 +17,16 @@ export const Card = ({ data }: { data: ITodo }) => {
       ref={drag as any}
       className="cursor-pointer border border-gray-200 rounded-xl flex-1 p-4 hover:shadow-lg"
     >
-      <div className="text-lg font-semibold">
-        {data.title}
+      <div className="text-lg font-semibold flex justify-between items-center w-full">
+        <div>
+          {data.title}
+        </div>
+        <div
+          className="font-light text-red-600 hover:text-red-900 cursor-pointer"
+          onClick={async () => { await deleteTodo(data.id); refresh?.() }}
+        >
+          x
+        </div>
       </div>
       <div className="text-base text-gray-500">
         {data.description}

@@ -21,7 +21,7 @@ export const Content = () => {
     async (status: TodoStatus[] = [TodoStatus.TODO, TodoStatus.IN_PROGRESS, TodoStatus.DONE]) => {
       try {
         Promise.all(status.map(async (status) => {
-          const data = await getTodos(status)
+          const { data } = await getTodos(status)
           if (data) {
             setTodos(status, data.todos)
           }

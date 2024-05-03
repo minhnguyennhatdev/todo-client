@@ -3,6 +3,7 @@ import { Input } from "@/components/commons/Input"
 import { Overlay } from "@/components/commons/Overlay"
 import { Select } from "@/components/commons/Select"
 import { AddTodo, addTodo, ITodo, TodoStatus } from "@/services/todo"
+import { HttpStatusCode } from "axios"
 import { useCallback, useState } from "react"
 
 interface AddTaskModalProps {
@@ -27,11 +28,14 @@ export const AddTaskModal = ({ onClose, status, callback }: AddTaskModalProps) =
   const setValue = (value: any) => set((prev) => ({ ...prev, ...value }))
 
   const handleAddTask = useCallback(async (value: AddTodo) => {
-    await addTodo({
+    const { status } = await addTodo({
       ...value,
       status: value.status || TodoStatus.TODO
     })
-    callback?.()
+    console.log(status)
+    if (status === HttpStatusCode.Ok) {
+      callback?.()
+    }
   }, [callback])
 
   return (

@@ -1,4 +1,4 @@
-import { ITodo, TodoStatus } from "@/services/todo"
+import { ITodo, TodoStatus, updateTodo } from "@/services/todo"
 import { Card } from "./Card"
 import { useDrop } from "react-dnd"
 import _ from "lodash"
@@ -23,11 +23,7 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
     async ({ id, fromStatus, toStatus }: { id: number, fromStatus: TodoStatus, toStatus: TodoStatus }) => {
       try {
         setLoading(true)
-        await httpRequest({
-          method: "PUT",
-          url: `/api/todos/${id}`,
-          data: { status: toStatus }
-        })
+        await updateTodo(id, toStatus)
         refresh?.([fromStatus, toStatus])
       } catch (error) {
         console.error('Error updating todo status:', error);
@@ -40,7 +36,6 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
   const [, drop] = useDrop(() => ({
     accept: Object.values(TodoStatus).filter((_status) => _status !== status),
     drop: (item: ITodo, _monitor) => {
-      console.log(item, status)
       handleUpdateTodoStatus({ id: item.id, fromStatus: item.status, toStatus: status })
     },
     collect: (monitor) => ({
@@ -74,7 +69,7 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
     </div>
     <div className="space-y-4 mt-4">
       {data?.map((item, index) => {
-        return <Card key={index} data={item} />
+        return <Card refresh={() => refresh?.([item.status])} key={index} data={item} />
       })}
     </div>
   </div>
