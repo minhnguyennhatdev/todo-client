@@ -14,7 +14,7 @@ export default function Index() {
 export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     redirect: {
-      destination: '/todos',
+      destination: '/todo',
       permanent: false
     }
   }
