@@ -4,26 +4,28 @@ export const TodoStatus = {
     DONE: "DONE",
     IN_PROGRESS: "IN_PROGRESS",
     TODO: "TODO",
-};
+} as const;
+
+export type TodoStatus = keyof typeof TodoStatus;
 
 export interface ITodo {
     id: number;
     userId: number;
     title: string;
     description: string;
-    status: typeof TodoStatus[keyof typeof TodoStatus];
+    status: TodoStatus;
     createdAt: string;
 }
 
-export const getTodos = async () => {
-    const { data } = await httpRequest<ITodo[]>({
+export const getTodos = async (status?: TodoStatus) => {
+    const { data } = await httpRequest<{ todos: ITodo[]; hasNext: boolean }>({
         method: "GET",
-        url: "/api/todos",
+        url: "/api/todos" + (status ? `?status=${status}` : ""),
     });
     return data;
 };
 
-export type AddTodo = Pick<ITodo, "title" | "description">;
+export type AddTodo = Pick<ITodo, "title" | "description" | 'status'>;
 export const addTodo = async (todo: AddTodo) => {
     const data = await httpRequest<any>({
         method: "POST",

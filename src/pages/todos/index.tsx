@@ -1,4 +1,4 @@
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/commons/Layout";
 import { Todos } from "@/components/pages/todos";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 

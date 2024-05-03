@@ -3,29 +3,45 @@ import { Card } from "./Card"
 import { useDrop } from "react-dnd"
 import _ from "lodash"
 import { httpRequest } from "@/utils/axios"
+import { useState } from "react"
+import { Overlay } from "@/components/commons/Overlay"
+import ClipLoader from "react-spinners/ClipLoader";
+import { AddTaskModal } from "./AddTaskModal"
 
 interface WrapperProps {
   title: string,
   data: ITodo[],
-  type: string,
-  refresh?: () => void
+  status: TodoStatus,
+  refresh?: (status?: TodoStatus[]) => void
 }
 
-export const Wrapper = ({ title, data, type, refresh }: WrapperProps) => {
-  const handleUpdateTodoStatus = _.debounce(async ({ id, status }: { id: number, status: string }) => {
-    await httpRequest({
-      method: "PUT",
-      url: `/api/todos/${id}`,
-      data: { status }
-    })
-    refresh?.()
-  }, 500)
+export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
+  const [loading, setLoading] = useState(false)
+  const [showAddTask, setShowAddTask] = useState(false)
 
-  const [{ canDrop, isOver }, drop] = useDrop(() => ({
-    accept: Object.values(TodoStatus).filter((status) => status !== type),
+  const handleUpdateTodoStatus = _.debounce(
+    async ({ id, fromStatus, toStatus }: { id: number, fromStatus: TodoStatus, toStatus: TodoStatus }) => {
+      try {
+        setLoading(true)
+        await httpRequest({
+          method: "PUT",
+          url: `/api/todos/${id}`,
+          data: { status: toStatus }
+        })
+        refresh?.([fromStatus, toStatus])
+      } catch (error) {
+        console.error('Error updating todo status:', error);
+      } finally {
+        setLoading(false)
+      }
+    }
+    , 500)
+
+  const [, drop] = useDrop(() => ({
+    accept: Object.values(TodoStatus).filter((_status) => _status !== status),
     drop: (item: ITodo, _monitor) => {
-      console.log(item, type)
-      handleUpdateTodoStatus({ id: item.id, status: type })
+      console.log(item, status)
+      handleUpdateTodoStatus({ id: item.id, fromStatus: item.status, toStatus: status })
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -35,14 +51,24 @@ export const Wrapper = ({ title, data, type, refresh }: WrapperProps) => {
 
   return <div
     ref={drop as any}
-    data-testid={type}
+    data-testid={status}
     className="p-4 border border-dashed border-gray-200 rounded-lg flex-1"
   >
+    {loading ? <Overlay><div><ClipLoader /></div></Overlay> : null}
+    {showAddTask ?
+      <AddTaskModal
+        callback={async () => { await refresh?.(); setShowAddTask(false) }}
+        status={status}
+        onClose={() => setShowAddTask(false)} />
+      : null}
     <div className="flex justify-between items-center my-2">
       <div className="font-medium text-base text-gray-400">
         {title}
       </div>
-      <div className="cursor-pointer hover:underline hover:text-red-400">
+      <div
+        className="cursor-pointer hover:underline hover:text-red-400"
+        onClick={() => setShowAddTask(true)}
+      >
         Add
       </div>
     </div>
