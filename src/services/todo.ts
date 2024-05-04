@@ -54,14 +54,14 @@ export const deleteTodo = async (id: number) => {
     return data;
 };
 
-export const updateTodo = async (id: number, toStatus: TodoStatus) => {
+export const updateTodo = async (id: number, payload: Partial<ITodo>) => {
     const { data, status } = await httpRequest({
         method: "PUT",
         url: `/api/todos/${id}`,
-        data: { status: toStatus },
+        data: payload,
     });
     if (status === HttpStatusCode.Ok) {
         toast.info("Todo updated successfully");
     }
-    return data;
+    return { data, status };
 };

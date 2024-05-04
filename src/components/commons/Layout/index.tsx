@@ -22,7 +22,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       const fetchUser = async () => {
         try {
           const { data, status } = await me();
-          console.log(data, status)
           if (status === HttpStatusCode.Ok && data?.data) {
             dispatch(setUser(data?.data));
           } else {

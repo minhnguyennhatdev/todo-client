@@ -2,11 +2,10 @@ import { ITodo, TodoStatus, updateTodo } from "@/services/todo"
 import { Card } from "./Card"
 import { useDrop } from "react-dnd"
 import _ from "lodash"
-import { httpRequest } from "@/utils/axios"
 import { useState } from "react"
 import { Overlay } from "@/components/commons/Overlay"
 import ClipLoader from "react-spinners/ClipLoader";
-import { AddTaskModal } from "./AddTaskModal"
+import { TaskModal } from "./TaskModal"
 
 interface WrapperProps {
   title: string,
@@ -17,13 +16,13 @@ interface WrapperProps {
 
 export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
   const [loading, setLoading] = useState(false)
-  const [showAddTask, setShowAddTask] = useState(false)
+  const [showAddTask, setShowAddTask] = useState<boolean | ITodo>(false)
 
   const handleUpdateTodoStatus = _.debounce(
     async ({ id, fromStatus, toStatus }: { id: number, fromStatus: TodoStatus, toStatus: TodoStatus }) => {
       try {
         setLoading(true)
-        await updateTodo(id, toStatus)
+        await updateTodo(id, { status: toStatus })
         refresh?.([fromStatus, toStatus])
       } catch (error) {
         console.error('Error updating todo status:', error);
@@ -51,10 +50,12 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
   >
     {loading ? <Overlay><div><ClipLoader /></div></Overlay> : null}
     {showAddTask ?
-      <AddTaskModal
-        callback={async () => { await refresh?.(); setShowAddTask(false) }}
+      <TaskModal
+        callback={async () => { await refresh?.(); setShowAddTask(false); }}
         status={status}
-        onClose={() => setShowAddTask(false)} />
+        onClose={() => setShowAddTask(false)}
+        task={typeof showAddTask === 'object' ? showAddTask : undefined}
+      />
       : null}
     <div className="flex justify-between items-center my-2">
       <div className="font-medium text-base text-gray-400">
@@ -69,7 +70,7 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
     </div>
     <div className="space-y-4 mt-4">
       {data?.map((item, index) => {
-        return <Card refresh={() => refresh?.([item.status])} key={index} data={item} />
+        return <Card onClick={() => setShowAddTask(item)} refresh={() => refresh?.([item.status])} key={index} data={item} />
       })}
     </div>
   </div>

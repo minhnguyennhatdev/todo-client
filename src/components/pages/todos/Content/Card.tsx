@@ -1,9 +1,10 @@
 import { deleteTodo, ITodo } from "@/services/todo"
 import { formatDate } from "@/utils/format"
+import { useState } from "react"
 import { useDrag } from "react-dnd"
 
-export const Card = ({ data, refresh }: { data: ITodo, refresh: () => void }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
+export const Card = ({ data, refresh, onClick }: { data: ITodo, refresh: () => void, onClick: () => void }) => {
+  const [, drag] = useDrag(() => ({
     type: data.status,
     item: data,
     collect: (monitor) => ({
@@ -16,6 +17,7 @@ export const Card = ({ data, refresh }: { data: ITodo, refresh: () => void }) =>
     <div
       ref={drag as any}
       className="cursor-pointer border border-gray-200 rounded-xl flex-1 p-4 hover:shadow-lg"
+      onClick={onClick}
     >
       <div className="text-lg font-semibold flex justify-between items-center w-full">
         <div>

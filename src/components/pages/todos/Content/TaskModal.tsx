@@ -2,14 +2,15 @@ import { Button } from "@/components/commons/Button"
 import { Input } from "@/components/commons/Input"
 import { Overlay } from "@/components/commons/Overlay"
 import { Select } from "@/components/commons/Select"
-import { AddTodo, addTodo, ITodo, TodoStatus } from "@/services/todo"
+import { AddTodo, addTodo, ITodo, TodoStatus, updateTodo } from "@/services/todo"
 import { HttpStatusCode } from "axios"
 import { useCallback, useState } from "react"
 
 interface AddTaskModalProps {
-  onClose: () => void
+  onClose: () => void,
   status?: TodoStatus,
-  callback?: () => any
+  callback?: () => any,
+  task?: ITodo,
 }
 
 const Status = {
@@ -18,25 +19,26 @@ const Status = {
   [TodoStatus.DONE]: "Done"
 }
 
-export const AddTaskModal = ({ onClose, status, callback }: AddTaskModalProps) => {
+export const TaskModal = ({ onClose, status, callback, task }: AddTaskModalProps) => {
   const [value, set] = useState<AddTodo>({
-    status: status ?? TodoStatus.TODO,
-    title: "",
-    description: ""
+    status: status ?? task?.status ?? TodoStatus.TODO,
+    title: task?.title ?? "",
+    description: task?.description ?? "",
   })
 
-  const setValue = (value: any) => set((prev) => ({ ...prev, ...value }))
+  const setValue = (value: any): void => set((prev) => ({ ...prev, ...value }))
 
-  const handleAddTask = useCallback(async (value: AddTodo) => {
-    const { status } = await addTodo({
+  const handleSubmitTask = useCallback(async (value: AddTodo) => {
+    const request = task ? updateTodo(task.id, value) : addTodo({
       ...value,
       status: value.status || TodoStatus.TODO
     })
-    console.log(status)
+
+    const { status } = await request
     if (status === HttpStatusCode.Ok) {
       callback?.()
     }
-  }, [callback])
+  }, [callback, task])
 
   return (
     <Overlay outSideClick={onClose}>
@@ -76,8 +78,8 @@ export const AddTaskModal = ({ onClose, status, callback }: AddTaskModalProps) =
           <div></div>
           <Button
             className="w-full rounded-md bg-red-400 text-center text-black"
-            onClick={() => handleAddTask(value)}
-            text="Add" />
+            onClick={() => handleSubmitTask(value)}
+            text={task ? "Update" : "Add"} />
         </div>
       </div>
     </Overlay>
