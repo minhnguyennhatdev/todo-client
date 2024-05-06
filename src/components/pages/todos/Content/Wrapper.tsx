@@ -25,7 +25,7 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
       try {
         setLoading(true)
         await updateTodo(id, { status: toStatus })
-        refresh?.([fromStatus, toStatus])
+        refresh?.()
       } catch (error) {
         console.error('Error updating todo status:', error);
       } finally {
