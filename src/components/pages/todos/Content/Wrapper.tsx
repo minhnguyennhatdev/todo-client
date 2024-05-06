@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Overlay } from "@/components/commons/Overlay"
 import ClipLoader from "react-spinners/ClipLoader";
 import { TaskModal } from "./TaskModal"
+import { useTranslation } from "next-i18next"
 
 interface WrapperProps {
   title: string,
@@ -15,6 +16,7 @@ interface WrapperProps {
 }
 
 export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [showAddTask, setShowAddTask] = useState<boolean | ITodo>(false)
 
@@ -65,7 +67,7 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
         className="cursor-pointer hover:underline hover:text-red-400"
         onClick={() => setShowAddTask(true)}
       >
-        Add
+        {t('common:add')}
       </div>
     </div>
     <div className="space-y-4 mt-4">

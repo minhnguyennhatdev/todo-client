@@ -4,6 +4,7 @@ import { Overlay } from "@/components/commons/Overlay"
 import { Select } from "@/components/commons/Select"
 import { AddTodo, addTodo, ITodo, TodoStatus, updateTodo } from "@/services/todo"
 import { HttpStatusCode } from "axios"
+import { useTranslation } from "next-i18next"
 import { useCallback, useState } from "react"
 
 interface AddTaskModalProps {
@@ -20,6 +21,8 @@ const Status = {
 }
 
 export const TaskModal = ({ onClose, status, callback, task }: AddTaskModalProps) => {
+  const { t } = useTranslation()
+
   const [value, set] = useState<AddTodo>({
     status: status ?? task?.status ?? TodoStatus.TODO,
     title: task?.title ?? "",
@@ -51,7 +54,7 @@ export const TaskModal = ({ onClose, status, callback, task }: AddTaskModalProps
         </div>
         <div className="flex justify-center flex-col items-center py-4 space-y-4">
           <div className="w-full">
-            Status
+            {t('common:status')}
           </div>
           <Select
             onChange={(e) => setValue({ status: e.target.value })}
@@ -61,28 +64,27 @@ export const TaskModal = ({ onClose, status, callback, task }: AddTaskModalProps
           />
 
           <div className="w-full">
-            Content
+            {t('common:content')}
           </div>
           <Input
             onChange={(e) => setValue({ title: e.target.value })}
             value={value.title}
-            placeholder="Title"
+            placeholder={t('common:title')}
             className="w-full"
           />
           <Input
             onChange={(e) => setValue({ description: e.target.value })}
             value={value.description}
-            placeholder="Description"
+            placeholder={t('common:description')}
             className="w-full"
           />
           <div></div>
           <Button
             className="w-full rounded-md bg-red-400 text-center text-black"
             onClick={() => handleSubmitTask(value)}
-            text={task ? "Update" : "Add"} />
+            text={task ? t('common:update') : t('common:add')} />
         </div>
       </div>
     </Overlay>
-
   )
 }

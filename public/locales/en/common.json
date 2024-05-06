@@ -5,5 +5,13 @@
   "title": "Title",
   "description": "Description",
   "add": "Add",
-  "todo_list": "Todo List"
+  "add_task": "Add Task",
+  "todo_list": "Todo List",
+  "todo": "Todo",
+  "in_progress": "In Progress",
+  "done": "Done",
+  "update": "Update",
+  "status": "Status",
+  "content": "Content",
+  "board_view": "Board View"
 }

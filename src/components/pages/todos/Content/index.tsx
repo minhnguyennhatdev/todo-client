@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useState } from "react"
+import { use, useCallback, useEffect, useState } from "react"
 import { Wrapper } from "./Wrapper"
 import { getTodos, ITodo, TodoStatus } from "@/services/todo";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { useTranslation } from "next-i18next";
 
 export const Content = () => {
+  const { t } = useTranslation()
+
   const [todos, set] = useState<Record<TodoStatus, ITodo[]>>({
     [TodoStatus.TODO]: [],
     [TodoStatus.IN_PROGRESS]: [],
@@ -43,16 +46,16 @@ export const Content = () => {
       refresh={fetchTodoList}
       title={title}
       status={status}
-      data={todos?.[status].filter(t => t.status === status)}
+      data={todos?.[status]}
     />
   }
 
   return (
     <div className="flex my-4 gap-8">
       <DndProvider backend={HTML5Backend}>
-        {renderWrapper({ title: "Todo", status: TodoStatus.TODO })}
-        {renderWrapper({ title: "In Progress", status: TodoStatus.IN_PROGRESS })}
-        {renderWrapper({ title: "Done", status: TodoStatus.DONE })}
+        {[TodoStatus.TODO, TodoStatus.IN_PROGRESS, TodoStatus.DONE].map((status) =>
+          renderWrapper({ title: t(`common:${status?.toLowerCase()}`), status })
+        )}
       </DndProvider>
     </div>
   )

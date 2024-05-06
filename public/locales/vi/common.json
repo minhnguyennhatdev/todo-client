@@ -5,5 +5,13 @@
   "title": "Tiêu đề",
   "description": "Miêu tả",
   "add": "Thêm",
-  "todo_list": "Danh sách"
+  "add_task": "Thêm công việc",
+  "todo_list": "Danh sách công việc",
+  "todo": "Công việc",
+  "in_progress": "Đang thực hiện",
+  "done": "Đã hoàn thành",
+  "update": "Cập nhật",
+  "status": "Trạng thái",
+  "content": "Nội dung",
+  "board_view": "Bảng công việc"
 }
