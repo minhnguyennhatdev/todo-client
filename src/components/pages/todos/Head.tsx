@@ -12,9 +12,9 @@ export const Head = () => {
       <div className="font-semibold">
         {t('common:board_view')}
       </div>
-      <div>
+      {/* <div>
         <Button text={t('common:add_task')} onClick={() => setShowAddTask(true)} />
-      </div>
+      </div> */}
     </div>
   )
 }

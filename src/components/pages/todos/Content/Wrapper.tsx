@@ -1,4 +1,4 @@
-import { ITodo, TodoStatus, updateTodo } from "@/services/todo"
+import { ITodo, ITodoResponse, TodoStatus, updateTodo } from "@/services/todo"
 import { Card } from "./Card"
 import { useDrop } from "react-dnd"
 import _ from "lodash"
@@ -10,17 +10,31 @@ import { useTranslation } from "next-i18next"
 
 interface WrapperProps {
   title: string,
-  data: ITodo[],
+  data: ITodoResponse,
   status: TodoStatus,
-  refresh?: (status?: TodoStatus[]) => void
+  refresh: (status?: TodoStatus[], pageSize?: number) => void
+  setPageSize: (status: TodoStatus, pageSize: number) => void
 }
 
-export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
+export const Wrapper = ({ title, data, status, refresh, setPageSize }: WrapperProps) => {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [showAddTask, setShowAddTask] = useState<boolean | ITodo>(false)
 
-  const handleUpdateTodoStatus = _.debounce(
+  const handleLoadMore = _.throttle(async () => {
+    try {
+      setLoading(true)
+      const newPageSize = data?.todos?.length + 5
+      await setPageSize(status, newPageSize)
+      await refresh?.([status], newPageSize)
+    } catch (error) {
+      console.error('Error loading more todos:', error);
+    } finally {
+      setLoading(false)
+    }
+  }, 300)
+
+  const handleUpdateTodoStatus = _.throttle(
     async ({ id, fromStatus, toStatus }: { id: number, fromStatus: TodoStatus, toStatus: TodoStatus }) => {
       try {
         setLoading(true)
@@ -32,7 +46,7 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
         setLoading(false)
       }
     }
-    , 500)
+    , 300)
 
   const [, drop] = useDrop(() => ({
     accept: Object.values(TodoStatus).filter((_status) => _status !== status),
@@ -71,9 +85,22 @@ export const Wrapper = ({ title, data, status, refresh }: WrapperProps) => {
       </div>
     </div>
     <div className="space-y-4 mt-4">
-      {data?.map((item, index) => {
-        return <Card onClick={() => setShowAddTask(item)} refresh={() => refresh?.([item.status])} key={index} data={item} />
+      {data?.todos?.map((item) => {
+        return <Card
+          onClick={() => setShowAddTask(item)}
+          refresh={() => refresh?.([item.status])}
+          key={item.id}
+          data={item}
+        />
       })}
     </div>
+    {data?.hasNext ?
+      <div
+        className="mt-4 text-center cursor-pointer hover:underline text-red-400"
+        onClick={() => handleLoadMore()}
+      >
+        Load more
+      </div>
+      : null}
   </div>
 }

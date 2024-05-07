@@ -1,9 +1,14 @@
 import { deleteTodo, ITodo } from "@/services/todo"
 import { formatDate } from "@/utils/format"
-import { useState } from "react"
 import { useDrag } from "react-dnd"
 
-export const Card = ({ data, refresh, onClick }: { data: ITodo, refresh: () => void, onClick: () => void }) => {
+interface CardProps {
+  data: ITodo,
+  refresh: () => void,
+  onClick: () => void,
+}
+
+export const Card = ({ data, refresh, onClick }: CardProps) => {
   const [, drag] = useDrag(() => ({
     type: data.status,
     item: data,
@@ -25,7 +30,7 @@ export const Card = ({ data, refresh, onClick }: { data: ITodo, refresh: () => v
         </div>
         <div
           className="font-light text-red-600 hover:text-red-900 cursor-pointer"
-          onClick={async () => { await deleteTodo(data.id); refresh?.() }}
+          onClick={async (e) => { e.stopPropagation(); await deleteTodo(data.id); refresh?.() }}
         >
           x
         </div>
