@@ -38,8 +38,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const logout = useCallback(() => {
     localStorage.removeItem('accessToken');
     delete axios.defaults.headers.common["Authorization"];
-     dispatch(setUser(null));
-     router.push('/unauthorized')
+    dispatch(setUser(null));
+    router.push('/unauthorized')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, user])
 
