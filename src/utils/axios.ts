@@ -1,6 +1,6 @@
 import Axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-const axios = Axios.create({
+export const axios = Axios.create({
     baseURL: process.env.NEXT_PUBLIC_TODO_SERVER_URL,
     validateStatus: () => true,
 });

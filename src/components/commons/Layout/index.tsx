@@ -2,7 +2,7 @@ import { LANGUAGE, useLanguage } from "@/hooks.ts/useLanguage";
 import { setUser } from "@/redux/slices/authSlice";
 import { RootState } from "@/redux/store";
 import { buildLoginUrl } from "@/utils/sso";
-import axios, { HttpStatusCode } from "axios";
+import { HttpStatusCode } from "axios";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { me } from "@/services/user";
 import { useRouter } from "next/navigation";
+import { axios } from "@/utils/axios";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const logout = useCallback(() => {
     localStorage.removeItem('accessToken');
     delete axios.defaults.headers.common["Authorization"];
+    delete axios.defaults.headers['Authorization']
     dispatch(setUser(null));
     router.push('/unauthorized')
     // eslint-disable-next-line react-hooks/exhaustive-deps

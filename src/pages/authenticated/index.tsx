@@ -1,9 +1,8 @@
-import { httpRequest } from "@/utils/axios"
+import { axios, httpRequest } from "@/utils/axios"
 import { GetServerSidePropsContext } from "next"
 import { useEffect } from "react"
 import { useRouter } from "next/router"
 import ClipLoader from "react-spinners/ClipLoader";
-import axios from "axios";
 import { authenticated } from "@/services/user";
 
 const Authenticated = ({ accessToken }: { accessToken: string }) => {
