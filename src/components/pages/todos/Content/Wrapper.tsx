@@ -1,12 +1,12 @@
 import { ITodo, ITodoResponse, TodoStatus, updateTodo } from "@/services/todo"
-import { Card } from "./Card"
 import { useDrop } from "react-dnd"
 import _ from "lodash"
 import { useState } from "react"
 import { Overlay } from "@/components/commons/Overlay"
 import ClipLoader from "react-spinners/ClipLoader";
-import { TaskModal } from "./TaskModal"
 import { useTranslation } from "next-i18next"
+import { Card } from "./Card"
+import { TaskModal } from "./TaskModal"
 
 interface WrapperProps {
   title: string,

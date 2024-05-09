@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react"
-import { Wrapper } from "./Wrapper"
 import { getTodos, ITodo, ITodoResponse, TodoStatus } from "@/services/todo";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "next-i18next";
+import { Wrapper } from "./Wrapper";
 
 const DEFAULT_PAGE_SIZE = 5;
 

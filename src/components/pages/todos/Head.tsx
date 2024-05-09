@@ -1,7 +1,6 @@
-import { Button } from "@/components/commons/Button"
-import { TaskModal } from "./Content/TaskModal"
 import { useState } from "react"
 import { useTranslation } from "next-i18next"
+import { TaskModal } from "./Content/TaskModal"
 
 export const Head = () => {
   const { t } = useTranslation()

@@ -1,5 +1,5 @@
 import { Layout } from "@/components/commons/Layout";
-import { Todos } from "@/components/pages/todos";
+import { Todos } from "@/components/pages/Todos";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
