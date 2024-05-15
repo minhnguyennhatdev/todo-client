@@ -93,9 +93,6 @@ export default function Index() {
     };
     setToken();
   }, []);
-
-
-  return <div>HI</div>
 }
 
 
