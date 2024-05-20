@@ -26,7 +26,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           if (status === HttpStatusCode.Ok && data?.data) {
             dispatch(setUser(data?.data));
           } else {
-            logout()
+            // logout()
           }
         } catch (error) {
         }
@@ -36,14 +36,14 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('accessToken');
-    delete axios.defaults.headers.common["Authorization"];
-    delete axios.defaults.headers['Authorization']
-    dispatch(setUser(null));
-    router.push('/unauthorized')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, user])
+  // const logout = useCallback(() => {
+  //   localStorage.removeItem('accessToken');
+  //   delete axios.defaults.headers.common["Authorization"];
+  //   delete axios.defaults.headers['Authorization']
+  //   dispatch(setUser(null));
+  //   router.push('/unauthorized')
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dispatch, user])
 
   return (
     <div className="px-10">
@@ -57,9 +57,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             {user ?
               (<div>
                 {user.name}
-                (<span className="hover:underline hover:text-blue-300 cursor-pointer" onClick={() => logout()}>
+                {/* (<span className="hover:underline hover:text-blue-300 cursor-pointer" onClick={() => logout()}>
                   {t('common:logout')}
-                </span>)
+                </span>) */}
               </div>) :
               (<div className="hover:underline hover:text-green-300">
                 <a href={buildLoginUrl()}>

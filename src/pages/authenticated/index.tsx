@@ -17,6 +17,7 @@ const Authenticated = ({ accessToken }: { accessToken: string }) => {
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const { token } = context?.query
+  console.log(token)
   if (!token) {
     return {
       redirect: {
@@ -26,6 +27,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     }
   }
   const { data } = await authenticated(token as string)
+  console.log('data', data)
   const accessToken = data?.data?.token
   if (!accessToken) {
     return {
